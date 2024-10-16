@@ -73,7 +73,6 @@ async def process_day_selection(callback_query: CallbackQuery):
     except FileNotFoundError:
         await bot.answer_callback_query(callback_query.id, f"{selected_date} uchun fayl topilmadi!")
 
-
 @dp.callback_query(lambda c: c.data and c.data.startswith('prev_month_'))
 async def process_previous_month(callback_query: CallbackQuery):
     year, month = map(int, callback_query.data.split('_')[2:])
@@ -81,7 +80,10 @@ async def process_previous_month(callback_query: CallbackQuery):
     if month == 0:
         month = 12
         year -= 1
-    await callback_query.message.edit_reply_markup(create_calendar(year, month))
+
+    # Kalendarni yaratish va uni tahrirlash
+    markup = create_calendar(year, month)
+    await callback_query.message.edit_reply_markup(reply_markup=markup)  # reply_markup parametrini to'g'ri qo'shamiz
 
 
 @dp.callback_query(lambda c: c.data and c.data.startswith('next_month_'))
@@ -91,7 +93,10 @@ async def process_next_month(callback_query: CallbackQuery):
     if month == 13:
         month = 1
         year += 1
-    await callback_query.message.edit_reply_markup(create_calendar(year, month))
+
+    # Kalendarni yaratish va uni tahrirlash
+    markup = create_calendar(year, month)
+    await callback_query.message.edit_reply_markup(reply_markup=markup)  # reply_markup parametrini to'g'ri qo'shamiz
 
 
 @dp.message(Command('calendar'))
