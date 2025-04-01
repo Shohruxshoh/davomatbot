@@ -59,7 +59,14 @@ async def send_help(message: Message):
 async def process_day_selection(callback_query: CallbackQuery):
     # Tanlangan kun va oy ma'lumotlarini olish
     _, day, month, year = callback_query.data.split('_')
-    selected_date = f"{year}-{month}-{day}"  # YYYY-MM-DD formatida
+    if int(month) < 10 and int(day) < 10:
+        selected_date = f"{year}-0{month}-0{day}"  # YYYY-MM-DD formatida
+    elif int(month) < 10 and int(day) > 10:
+        selected_date = f"{year}-0{month}-{day}"
+    elif int(month) > 10 and int(day) < 10:
+        selected_date = f"{year}-{month}-0{day}"
+    else:
+        selected_date = f"{year}-{month}-{day}"  # YYYY-MM-DD formatida
     filename = f"{selected_date}.csv"  # Kuningizga mos fayl nomi
 
     try:
@@ -67,7 +74,6 @@ async def process_day_selection(callback_query: CallbackQuery):
             await send_file(callback_query.from_user.id, filename)
             await bot.answer_callback_query(callback_query.id, f"Siz {selected_date}-kunni tanladingiz!")
         else:
-            print("jjjjjj")
             await bot.answer_callback_query(callback_query.id, f"Kalendar orqali faqat admin ko'ra oladi!!!",
                                             show_alert=True)
     except FileNotFoundError:
